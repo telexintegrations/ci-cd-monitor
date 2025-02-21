@@ -9,7 +9,7 @@ dotenv.config(); // load env vars.
 const app = express();
 
 const corsOption = {
-    origin: 'https://telex.im',
+    origin: '*',
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type']
 };
@@ -20,7 +20,12 @@ app.use(express.json());
 
 const telexChannelWebhook = <string>process.env.Telex_Webhook_Url;
 
-// Listens for POST requests and makes a POST request to the webhook URL.
+/* 
+    This is the main service of the integration
+    This service will recieve a payload via POST requests from telex.im
+    It will then send the data to Telex channel
+    The telex channel will then forward the alert to slack (slack integration is setup within telex to recieve payload from telex)
+*/
 app.post('/monitor-service', async (req: Request, res: Response) => {
     const { event_name, message, status, username } = req.body;
 
@@ -44,6 +49,57 @@ app.post('/monitor-service', async (req: Request, res: Response) => {
         res.status(500).send('Failed to send alert to Telex channel.');
         console.log(e.message);
     };
+});
+
+app.get('/integration', async (req: Request, res: Response) => {
+    const jsonIntegration = {
+        data: {
+            date: {
+            created_at: Date.now(),
+            updated_at: Date.now()
+            },
+            descriptions: {
+            app_description: "This is an Integration that watches your CI-CD pipeline and send alerts to designated Telex channel",
+            app_logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHDtKVNBv2E2B0oUnVLEAFWgLETXKW_xo0gw&s",
+            app_name: "CI-CD Monitor",
+            app_url: "https://ci-cd-monitor-production.up.railway.app/home",
+            background_color: "#FF5733"
+            },
+            integration_category: "Monitoring & CI/CD",
+            integration_type: "output",
+            is_active: true,      
+            settings: [
+            {
+                label: "Telex Channel Webhook URL",
+                type: "text",
+                description: "The channel notifications from your CI-CD pipeline will route notifications to",
+                required: true
+            }, 
+            {
+                label: "Slack Workspace webhook URL",
+                type: "text",
+                description: "The slack app notifications from your CI-CD pipeline will route notifications to",
+                required: true
+            }
+            ],
+            key_features: [
+                "Real-time monitoring of CI-CD pipeline",
+                "Alerts on pipeline failure",
+                "Alers on pipeline build status",
+                "Return alerts based on your pipeline usecase",
+            ],
+            target_url: "https://ci-cd-monitor-production.up.railway.app/monitor-service"
+        }
+    };
+    res.status(200).json(jsonIntegration);
+});
+
+app.get('/home', (req: Request, res: Response) => {
+    res.status(200).json({
+        status: "active",
+        integration_name: "CI-CD Monitor",
+        description: "Watches your CI-CD pipeline and sends alerts to your team"
+    });
 });
 
 const PORT = process.env.PORT || 3000;
