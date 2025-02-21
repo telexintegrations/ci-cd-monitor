@@ -1,10 +1,8 @@
 import express, { Request, Response } from 'express';
 import axios from 'axios';
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 import { payloadDTO } from './dto';
 import cors from 'cors';
-
-dotenv.config(); // load env vars.
 
 const app = express();
 
@@ -14,11 +12,13 @@ const corsOption = {
     allowedHeaders: ['Content-Type']
 };
 
+// Enable CORS with specified configuration
 app.use(cors(corsOption));
 
+// Parse incoming JSON requests.
 app.use(express.json()); 
 
-const telexChannelWebhook = <string>process.env.Telex_Webhook_Url;
+const telexChannelWebhook = "https://ping.telex.im/v1/webhooks/0195202b-1d79-75d3-b188-b19ff8807259";
 
 /* 
     This is the main service of the integration
@@ -51,7 +51,11 @@ app.post('/monitor-service', async (req: Request, res: Response) => {
     };
 });
 
-app.get('/integration', async (req: Request, res: Response) => {
+
+/* 
+    This is the route that returns the JSON integration
+*/
+app.get('/integration', (_req: Request, res: Response) => {
     const jsonIntegration = {
         data: {
             date: {
@@ -94,7 +98,10 @@ app.get('/integration', async (req: Request, res: Response) => {
     res.status(200).json(jsonIntegration);
 });
 
-app.get('/home', (req: Request, res: Response) => {
+/* 
+    This is the home route of the integration
+*/
+app.get('/home', (_req: Request, res: Response) => {
     res.status(200).json({
         status: "active",
         integration_name: "CI-CD Monitor",
@@ -102,6 +109,6 @@ app.get('/home', (req: Request, res: Response) => {
     });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = 8070;
 
 app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`));
