@@ -66,10 +66,10 @@ app.get('/integration', (_req: Request, res: Response) => {
             app_description: "This is an Integration that watches your CI-CD pipeline and send alerts to designated Telex channel",
             app_logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHDtKVNBv2E2B0oUnVLEAFWgLETXKW_xo0gw&s",
             app_name: "CI-CD Monitor",
-            app_url: "https://ci-cd-monitor-production.up.railway.app/home",
+            app_url: "https://ci-cd-monitor.onrender.com/home",
             background_color: "#FF5733"
             },
-            integration_category: "Monitoring & CI/CD",
+            integration_category: "DevOps & CI/CD",
             integration_type: "output",
             is_active: true,      
             settings: [
@@ -92,7 +92,7 @@ app.get('/integration', (_req: Request, res: Response) => {
                 "Alers on pipeline build status",
                 "Return alerts based on your pipeline usecase",
             ],
-            target_url: "https://ci-cd-monitor-production.up.railway.app/monitor-service"
+            target_url: "https://ci-cd-monitor.onrender.com/monitor-service"
         }
     };
     res.status(200).json(jsonIntegration);
@@ -112,3 +112,5 @@ app.get('/home', (_req: Request, res: Response) => {
 const PORT = 8070;
 
 app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`));
+
+export { app };
