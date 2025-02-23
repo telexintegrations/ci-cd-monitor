@@ -62,8 +62,8 @@ app.get('/integration', (_req: Request, res: Response) => {
     const jsonIntegration = {
         data: {
             date: {
-            created_at: Date.now(),
-            updated_at: Date.now()
+            created_at: Date.now().toString(),
+            updated_at: Date.now().toString()
             },
             descriptions: {
             app_description: "This is an Integration that watches your CI-CD pipeline and send alerts to designated Telex channel",
