@@ -26,11 +26,12 @@ const telexChannelWebhook = "https://ping.telex.im/v1/webhooks/0195202b-1d79-75d
     It will then send the data to Telex channel
     The telex channel will then forward the alert to slack (slack integration is setup within telex to recieve payload from telex)
 */
-app.post('/monitor-service', async (req: Request, res: Response) => {
+app.post('/monitor-service', async (req: Request, res: Response): Promise<void> => {
     const { event_name, message, status, username } = req.body;
 
     if (!event_name || !username || !status || !message) {
-        res.status(400).json({ error: 'Status and Message data are required.' });
+        res.status(400).json({ error: 'All fields are required' });
+        return;
     };
 
     try {
@@ -41,10 +42,12 @@ app.post('/monitor-service', async (req: Request, res: Response) => {
             username
         };
 
-        const response = await axios.post(telexChannelWebhook, data); 
-        // const newWebhook = `${telexChannelWebhook}?event_name=${event_name}&message=${message}&status=${status}&username=${username}`;
-        // const resp = await axios.get(newWebhook);
-         res.status(200).json({status: 'Alert sent to Telex Channel', payload: response.data});
+        const response = await axios.post(telexChannelWebhook, data);
+        res.status(200).json({
+            status: "Alert sent to Telex Channel",
+            payload: data
+        });
+
     } catch (e: any) {
         res.status(500).send('Failed to send alert to Telex channel.');
         console.log(e.message);

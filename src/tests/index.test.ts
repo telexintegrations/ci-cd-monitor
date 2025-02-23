@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { app } from '../index';
+import { describe, it, expect } from '@jest/globals';
 
 describe('Integration', () => {
   it('should respond to GET /home', async () => {
@@ -24,7 +25,7 @@ describe('Integration', () => {
       message: 'Build failed due to linting errors'
     });
     expect(response.status).toBe(400);
-    expect(response.body).toEqual({ error: 'Status and Message data are required.' });
+    expect(response.body).toEqual({ error: 'All fields are required' });
   });
 
   it('should respond to POST /monitor-service with valid data', async () => {
